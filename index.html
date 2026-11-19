@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#5b1725">
+  <meta name="description" content="SchoolTrack EAPIHS offline-first school inventory system">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <title>SchoolTrack EAPIHS</title>
+</head>
+<body>
+  <div id="splash" class="splash">
+    <div class="brand-mark">ST</div><h1>SchoolTrack EAPIHS</h1><p>School Inventory System</p>
+  </div>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark small">ST</span><div><b>SchoolTrack EAPIHS</b><small>Offline + Shared Inventory</small></div></div>
+    <div class="top-actions"><span id="networkState" class="pill">Checking connection…</span><button id="themeBtn" class="icon-btn" aria-label="Toggle theme">◐</button></div>
+  </header>
+  <section id="accessPanel" class="access-panel">
+    <div class="panel-card">
+      <h2>Welcome to SchoolTrack</h2>
+      <p>Choose how you want to enter.</p>
+      <div class="access-actions">
+        <button id="guestBtn" class="primary">Continue as Guest</button>
+        <button id="adminBtn" class="secondary">Admin Sign In</button>
+      </div>
+      <p class="muted">Guest access is limited. Admin actions require server verification.</p>
+    </div>
+  </section>
+  <main id="app" class="hidden">
+    <nav class="nav">
+      <button data-page="home" class="active">Home</button>
+      <button data-page="inventory">Inventory</button>
+      <button data-page="add">Add Item</button>
+      <button data-page="reports">Reports</button>
+      <button data-page="history">History</button>
+      <button data-page="account">Account</button>
+    </nav>
+    <section id="page-home" class="page">
+      <div class="page-heading"><div><h1>Dashboard</h1><p>Overview of school equipment and supplies</p></div><button id="syncBtn" class="secondary">Sync now</button></div>
+      <div class="stats">
+        <article><span>Total Items</span><strong id="totalCount">0</strong></article>
+        <article><span>Available</span><strong id="availableCount">0</strong></article>
+        <article><span>Borrowed</span><strong id="borrowedCount">0</strong></article>
+        <article><span>For Repair</span><strong id="repairCount">0</strong></article>
+        <article><span>Missing</span><strong id="missingCount">0</strong></article>
+        <article><span>Low Stock</span><strong id="lowCount">0</strong></article>
+      </div>
+      <div class="panel-card"><h2>Recent Activity</h2><div id="recentActivity" class="empty">No activity yet.</div></div>
+    </section>
+    <section id="page-inventory" class="page hidden">
+      <div class="page-heading"><div><h1>Inventory</h1><p>Search and manage recorded items</p></div><input id="searchBox" placeholder="Search item or category"></div>
+      <div id="inventoryList" class="item-list"></div>
+    </section>
+    <section id="page-add" class="page hidden">
+      <div class="page-heading"><div><h1>Add Inventory Item</h1><p>Only authorized administrators can add items.</p></div></div>
+      <form id="itemForm" class="panel-card form-grid">
+        <label>Item name<input name="name" required maxlength="100" placeholder="e.g. Desktop Computer"></label>
+        <label>Category<select name="category"><option>Computer Equipment</option><option>Furniture</option><option>Electrical</option><option>Tools</option><option>Learning Materials</option><option>Other</option></select></label>
+        <label>Quantity<input name="quantity" type="number" min="0" value="1" required></label>
+        <label>Condition<select name="condition"><option>Good</option><option>Needs Repair</option><option>Missing</option></select></label>
+        <label>Location<input name="location" maxlength="100" placeholder="e.g. ICT Laboratory"></label>
+        <label>Person Responsible<input name="responsible" maxlength="100" placeholder="e.g. ICT Coordinator"></label>
+        <label>Low-stock threshold<input name="threshold" type="number" min="0" value="2"></label>
+        <button class="primary full" type="submit">Save Item</button>
+      </form>
+    </section>
+    <section id="page-reports" class="page hidden">
+      <div class="page-heading"><div><h1>Reports & Feedback</h1><p>Submit an issue for review.</p></div></div>
+      <form id="reportForm" class="panel-card form-grid">
+        <label>Report type<select name="type"><option>Damaged equipment</option><option>Missing item</option><option>Low stock</option><option>Other concern</option></select></label>
+        <label>Related item<input name="item" maxlength="100" placeholder="Item name (optional)"></label>
+        <label class="full">Details<textarea name="details" required maxlength="1000" rows="4" placeholder="Describe the concern"></textarea></label>
+        <button class="primary full" type="submit">Submit Report</button>
+      </form>
+      <div class="panel-card"><h2>Submitted Reports</h2><div id="reportList" class="empty">No reports yet.</div></div>
+    </section>
+    <section id="page-history" class="page hidden">
+      <div class="page-heading"><div><h1>History</h1><p>Recent inventory and report activity on this device.</p></div><button id="exportBtn" class="secondary">Export JSON backup</button></div>
+      <div id="historyList" class="panel-card empty">No history yet.</div>
+      <div class="panel-card"><h2>Restore Backup</h2><input id="restoreFile" type="file" accept="application/json"><button id="restoreBtn" class="secondary">Restore selected backup</button></div>
+    </section>
+    <section id="page-account" class="page hidden">
+      <div class="page-heading"><div><h1>Account & Settings</h1><p>Access and synchronization settings</p></div></div>
+      <div class="panel-card">
+        <p>Signed in as: <b id="roleLabel">Guest</b></p>
+        <p id="syncMessage" class="muted">Local changes are stored on this device.</p>
+        <label>Supabase Project URL<input id="projectUrl" placeholder="https://your-project.supabase.co"></label>
+        <label>Supabase Publishable / anon key<input id="anonKey" placeholder="Paste your public anon key"></label>
+        <button id="saveConfig" class="secondary">Save connection settings</button>
+        <button id="logoutBtn" class="danger">Sign out</button>
+        <p class="notice">Never paste a service_role key or Admin Code into this page or public source files.</p>
+      </div>
+    </section>
+  </main>
+  <div id="dialog" class="dialog hidden" role="dialog" aria-modal="true">
+    <div class="dialog-card"><h2 id="dialogTitle">Admin Sign In</h2><p id="dialogText">Enter your admin code.</p><input id="adminCode" type="password" autocomplete="off" placeholder="Admin code"><div class="dialog-actions"><button id="cancelDialog" class="secondary">Cancel</button><button id="confirmDialog" class="primary">Continue</button></div></div>
+  </div>
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
