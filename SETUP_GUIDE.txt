@@ -1,0 +1,35 @@
+PHONE-FRIENDLY SETUP GUIDE
+==========================
+
+PART A — Put the app online
+1. Download and extract this ZIP.
+2. Upload the files and folders inside the package to a new GitHub repository.
+3. In GitHub, open Settings > Pages.
+4. Choose Deploy from a branch, select main and /(root), then Save.
+5. Wait for the Pages link. Open it on your phone and use your browser menu > Add to Home screen.
+
+PART B — Prepare Supabase
+1. Open your NEW Supabase project.
+2. Open SQL Editor, create a new query, paste supabase/schema.sql, and run it.
+3. Open Edge Functions and deploy a function named schooltrack-api using the file:
+   supabase/functions/schooltrack-api/index.ts
+   (If the dashboard asks for a CLI workflow, use the Supabase CLI from a computer or ask your school ICT coordinator to deploy it.)
+4. In the function's Secrets settings, add:
+   SCHOOLTRACK_ADMIN_CODE = a strong private code you choose
+   SUPABASE_SERVICE_ROLE_KEY = your project's service_role key
+   Never put either secret in GitHub or app.js.
+5. The function also receives SUPABASE_URL from Supabase's environment.
+
+PART C — Connect SchoolTrack
+1. Open SchoolTrack EAPIHS.
+2. Choose Guest or Admin Sign In.
+3. Open Account.
+4. Enter your Supabase Project URL and the public anon/publishable key only.
+5. Save settings.
+6. Sign in as Admin and use Sync now.
+
+IMPORTANT
+- Never share the Admin Code or service_role key.
+- The public anon key is designed to be used in the browser, but database access still depends on correct RLS policies.
+- Ask your teacher/ICT coordinator to supervise Supabase deployment and security review.
+- This package is a starter build. Read README.txt for features that are not yet implemented.
